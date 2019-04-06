@@ -1,0 +1,48 @@
+@using System.Reflection;
+@using System.ComponentModel.DataAnnotations;
+
+@typeparam TEnum
+
+<div class="mui-select">
+    <select value="@For" onchange="@OnSelectChange">
+        @foreach(var name in _enumNames){
+            <option value="@name">@GetEnumDisplayName(name)</option>
+        }
+    </select>
+    @if(!string.IsNullOrWhiteSpace(Label))
+    {
+        <label>@Label</label>
+    }
+</div>
+
+@functions {
+    [Parameter]
+    private TEnum For { get; set; }
+
+    [Parameter]
+    private string Label { get; set; }
+
+    [Parameter]
+    private EventCallback<TEnum> ForChanged { get; set; }
+
+    [Parameter]
+    private Action OnChange {get;set;}
+
+    private List<string> _enumNames {get;set;}
+
+    protected override void OnInit()
+    {
+        _enumNames = Enum.GetNames(typeof(TEnum)).ToList();
+    }
+
+    async Task OnSelectChange(UIChangeEventArgs e){
+        For = (TEnum)Enum.Parse(typeof(TEnum), e.Value.ToString());
+        await ForChanged.InvokeAsync(For);
+        if(OnChange != null)
+            OnChange.Invoke();
+    }
+
+    string GetEnumDisplayName(string value){
+        return typeof(TEnum).GetMember(value).First().GetCustomAttribute<DisplayAttribute>().GetName();
+    }
+}

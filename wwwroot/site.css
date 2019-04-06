@@ -1,0 +1,68 @@
+﻿body {
+    font-family: "Roboto", "Helvetica Neue", Helvetica, Arial;
+    background-color: #55f;
+}
+
+h3 {
+    font-size: 21px;
+}
+
+.mui-container{
+    padding-top: 15px;
+    background-color: #55f;
+}
+
+.mui-select>select:focus~label,
+.mui-textfield>input:focus~label{
+    color: #55f;
+}
+
+.mui-select>select:focus,
+.mui-textfield>input:focus{
+    border-color: #55f;
+}
+
+option:checked {
+    background: #55f;
+  }
+
+select[multiple]:focus option:checked {
+    background: #55f linear-gradient(0deg, #55f 0%, #55f 100%);
+}
+
+.mui-multiselect > select{
+    display: block;
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: 0;
+    border: none;
+    border-bottom: 1px solid rgba(0,0,0,.26);
+    border-radius: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    background-color: transparent;
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zd…M9IjAsMCAxMCwwIDUsNiIgc3R5bGU9ImZpbGw6cmdiYSgwLDAsMCwuMjQpOyIvPjwvc3ZnPg==);
+    background-repeat: no-repeat;
+    background-position: right center;
+    cursor: pointer;
+    color: rgba(0,0,0,.87);
+    font-size: 16px;
+    font-family: inherit;
+    line-height: inherit;
+    padding: 0 25px 0 0;
+}
+
+.mui-multiselect > label{
+    display: block;
+    width: 100%;
+    color: rgba(0,0,0,.54);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 15px;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-bottom: 10px;
+}

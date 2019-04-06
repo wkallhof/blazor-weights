@@ -1,0 +1,28 @@
+<div class="mui-textfield mui-textfield--float-label">
+    <input value="@For" type="number" onchange="@OnInputChange"/>
+    @if(!string.IsNullOrWhiteSpace(Label))
+    {
+        <label>@Label</label>
+    }
+</div>
+
+@functions {
+    [Parameter]
+    private int? For { get; set; }
+
+    [Parameter]
+    private string Label { get; set; }
+
+    [Parameter]
+    private EventCallback<int?> ForChanged { get; set; }
+
+    [Parameter]
+    private Action OnChange {get;set;}
+
+    async Task OnInputChange(UIChangeEventArgs e){
+        For = (e.Value == null || string.IsNullOrWhiteSpace(e.Value.ToString())) ? null : (int?)Convert.ToInt32(e.Value);
+        await ForChanged.InvokeAsync(For);
+        if(OnChange != null)
+            OnChange.Invoke();
+    }
+}

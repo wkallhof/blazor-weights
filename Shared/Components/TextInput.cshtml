@@ -1,0 +1,26 @@
+@if(!string.IsNullOrWhiteSpace(Label))
+{
+    <label>@Label</label>
+}
+<input value="@For" type="text" onchange="@OnInputChange"/>
+
+@functions {
+    [Parameter]
+    private string For { get; set; }
+
+    [Parameter]
+    private string Label { get; set; }
+
+    [Parameter]
+    private EventCallback<string> ForChanged { get; set; }
+
+    [Parameter]
+    private Action OnChange {get;set;}
+
+    async Task OnInputChange(UIChangeEventArgs e){
+        For = e.Value.ToString();
+        await ForChanged.InvokeAsync(For);
+        if(OnChange != null)
+            OnChange.Invoke();
+    }
+}

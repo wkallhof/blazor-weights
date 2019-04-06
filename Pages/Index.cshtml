@@ -1,0 +1,117 @@
+﻿@using Weights
+@using Weights.Shared
+@using System.ComponentModel.DataAnnotations;
+
+@layout MainLayout
+
+@page "/"
+
+<div class="mui-panel">
+    <h3>Calculate 1 Max Rep</h3>
+    <form class="mui-form">
+        <NumericInput Label="Weight" bind-For="@WeightInput" OnChange="@Update" />
+        <NumericInput Label="Reps" bind-For="@RepsInput" OnChange="@Update" />
+    </form>
+
+    @if(WeightAndRepsValid())
+    {
+        <span>Calculated 1 Max Rep:  @CalculatedMaxRep</span>
+    }
+</div>
+
+<!-- Dirty Return Early -->
+@if(!WeightAndRepsValid()){ return; }
+
+<div class="mui-panel">
+    <h3>Modifications & Percents</h3>
+    <form class="mui-form">
+        <EnumDropdown Label="Modification" bind-For="@CurrentModification" OnChange="@Update" />
+        <MultiDropdown Label="Percents" Items="@PercentOptions" bind-For="@SelectedPercents" OnChange="@Update" />
+    </form>
+</div>
+
+@if(!SelectedPercents.Any()){ return; }
+
+<div class="mui-panel">
+    <h3>Calculated Weights</h3>
+    <table class="mui-table mui-table--bordered">
+        <thead>
+            <tr>
+                <th>%</th>
+                <th>Weight</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var row in Rows)
+            {
+                Console.WriteLine("Rows: "+Rows.Count);
+                <tr>
+                    <td>@row.Percent</td>
+                    <td>@row.Weight lbs</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@functions {
+    int? WeightInput;
+    int? RepsInput;
+
+    int CalculatedMaxRep = 0;
+
+    WeightModification CurrentModification;
+
+    List<SelectListItem<int>> PercentOptions = new List<SelectListItem<int>>();
+    List<int> SelectedPercents = new List<int>();
+
+    IList<Row> Rows = new List<Row>();
+
+    protected override void OnInit()
+    {
+        PercentOptions = Enumerable.Range(0, 100)
+            .Where(x => x%5 == 0)
+            .Select(x => new SelectListItem<int>($"{x}%", x)).ToList();
+
+        Update();
+    }
+
+    void Update(){
+        if(!WeightInput.HasValue || !RepsInput.HasValue)
+            return;
+
+        CalculatedMaxRep = RoundTo5((WeightInput.Value * RepsInput.Value * 0.0333) + WeightInput.Value);
+
+        var modifiedMax = CurrentModification == WeightModification.NinetyPercentMax 
+            ? RoundTo5(CalculatedMaxRep * 0.9d)
+            : CalculatedMaxRep;
+
+        Rows = SelectedPercents.Select(x => new Row(){
+            Weight = RoundTo5(((x/100d) * modifiedMax)),
+            Percent = x
+        }).ToList();
+
+        //TODO: Troubleshoot why we need to call this
+        StateHasChanged();
+    }
+
+    int RoundTo5(double input){
+        return (int)Math.Round(input / 5.0) * 5;
+    }
+
+    bool WeightAndRepsValid()
+        => WeightInput.HasValue && WeightInput.Value != 0 && RepsInput.HasValue && RepsInput.Value != 0;
+
+    public class Row
+    {
+        public int Percent { get; set; }
+        public int Weight { get; set; }
+    }
+
+    public enum WeightModification{
+        [Display(Name = "None")]
+        None,
+        [Display(Name = "90% Max")]
+        NinetyPercentMax
+    }
+}

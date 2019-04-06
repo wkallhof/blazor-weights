@@ -1,0 +1,51 @@
+@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
+
+
+@typeparam T
+
+<div class="mui-multiselect">
+    @if(!string.IsNullOrWhiteSpace(Label))
+    {
+        <label>@Label</label>
+    }
+
+    <select ref="_multiSelectElement" value="@For" onchange="@OnSelectChange" multiple>
+        @foreach(var item in Items){
+            <option value="@item.Value">@item.Text</option>
+        }
+    </select>
+
+</div>
+
+@functions {
+
+    ElementRef _multiSelectElement;
+
+    [Parameter]
+    private List<SelectListItem<T>> Items { get; set; }
+
+    [Parameter]
+    private List<T> For { get; set; }
+
+    [Parameter]
+    private string Label { get; set; }
+
+    [Parameter]
+    private EventCallback<List<T>> ForChanged { get; set; }
+
+    [Parameter]
+    private Action OnChange {get;set;}
+
+    async Task OnSelectChange(UIChangeEventArgs e){
+        For = await GetSelectedItems();
+        await ForChanged.InvokeAsync(For);
+        if(OnChange != null)
+            OnChange.Invoke();
+    }
+
+    public async Task<List<T>> GetSelectedItems()
+    {
+        return (await JSRuntime.InvokeAsync<List<T>>("getSelectedValuesFromMultiSelect", _multiSelectElement)).ToList();
+    }
+}
