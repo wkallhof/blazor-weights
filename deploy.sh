@@ -1,5 +1,1 @@
-aws --version
-
-aws s3 sync ./src/www/ s3://%S3_BUCKET%/ --acl public-read --delete --content-type text/html --exclude "assets*"
-
-aws s3 sync ./src/www/assets s3://%S3_BUCKET%/assets/ --acl public-read --delete --follow-symlinks
+aws s3 sync ./bin/Release/netstandard2.0/publish/Weights/dist s3://weights.wmk.io --acl public-read --delete --follow-symlinks

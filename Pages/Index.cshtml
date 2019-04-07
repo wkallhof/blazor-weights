@@ -39,15 +39,22 @@
             <tr>
                 <th>%</th>
                 <th>Weight</th>
+                <th>Weights</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var row in Rows)
             {
-                Console.WriteLine("Rows: "+Rows.Count);
+                var weights = GetWeights(row.Weight);
                 <tr>
                     <td>@row.Percent</td>
                     <td>@row.Weight lbs</td>
+                    <td>Bar: @weights.First(), 
+                        @foreach(var group in weights.Skip(1).GroupBy(x => x))
+                        {
+                            <span>@group.Key <small>(x @group.Count())</small></span>
+                        }
+                    </td>
                 </tr>
             }
         </tbody>
@@ -65,7 +72,20 @@
     List<SelectListItem<int>> PercentOptions = new List<SelectListItem<int>>();
     List<int> SelectedPercents = new List<int>();
 
-    IList<Row> Rows = new List<Row>();
+    List<double> PossibleWeights = new List<double>(){
+		2.5,
+		5,
+		10,
+		15,
+		25,
+		45
+	};
+
+    const int MENS_BAR = 45;
+	const int WOMENS_BAR = 35;
+	const int TRAINER_BAR = 15;
+
+    List<Row> Rows = new List<Row>();
 
     protected override void OnInit()
     {
@@ -98,6 +118,31 @@
     int RoundTo5(double input){
         return (int)Math.Round(input / 5.0) * 5;
     }
+
+    List<double> GetWeights(int target){
+		var weights = new List<double>();
+		
+		if(target >= MENS_BAR)
+			weights.Add(MENS_BAR);
+		else if(target >= WOMENS_BAR)
+			weights.Add(WOMENS_BAR);
+		else if(target >= TRAINER_BAR)
+			weights.Add(TRAINER_BAR);
+		
+		PossibleWeights.OrderByDescending(x => x).ToList().ForEach(x => {
+			var plates = (int)Math.Floor((target - weights.Sum()) / x);
+			if(plates < 2)
+				return;
+			
+			if(plates % 2 != 0)
+				plates--;
+
+			Enumerable.Range(0, plates).ToList().ForEach(y => weights.Add(x));
+		});
+		
+		
+		return weights;
+	}
 
     bool WeightAndRepsValid()
         => WeightInput.HasValue && WeightInput.Value != 0 && RepsInput.HasValue && RepsInput.Value != 0;
