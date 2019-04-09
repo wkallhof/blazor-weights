@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Blazor.Hosting;
 
-namespace Weights
+namespace Weights.App
 {
     public class Program
     {

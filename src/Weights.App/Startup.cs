@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Weights
+namespace Weights.App
 {
     public class Startup
     {
@@ -9,7 +9,7 @@ namespace Weights
 
         public void Configure(IComponentsApplicationBuilder app)
         {
-            app.AddComponent<App>("app");
+            app.AddComponent<Index>("app");
         }
     }
 }

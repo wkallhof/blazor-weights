@@ -1,8 +1,6 @@
-﻿@using Weights
-@using Weights.Shared
+﻿@using Weights.App
+@using Weights.App.Components
 @using System.ComponentModel.DataAnnotations;
-
-@layout MainLayout
 
 @page "/"
 
@@ -89,7 +87,7 @@
 
     protected override void OnInit()
     {
-        PercentOptions = Enumerable.Range(0, 100)
+        PercentOptions = Enumerable.Range(0, 101)
             .Where(x => x%5 == 0)
             .Select(x => new SelectListItem<int>($"{x}%", x)).ToList();
 

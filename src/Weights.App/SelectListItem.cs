@@ -1,4 +1,4 @@
-namespace Weights
+namespace Weights.App
 {
     public class SelectListItem<T>{
         
